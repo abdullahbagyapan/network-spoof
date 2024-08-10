@@ -18,6 +18,20 @@ def install_dependencies():
     except subprocess.CalledProcessError as e:
         print(f"Failed to install packages: {e}")
 
+def enable_packet_forwarding():
+
+    command = ['sudo', 'sysctl', '-w', 'net.ipv4.ip_forward=1']
+    
+    # Execute the command
+    try:
+        print("Enabling packet forwarding...")
+        subprocess.check_call(command)
+        print("Packet forwarding enabled successfully...")
+
+    except subprocess.CalledProcessError as e:
+        print("Failed to enabling packet forwarding")
+        exit(1)
+
 def get_args():
     """
     \brief  Get arguments and validate them
@@ -82,6 +96,7 @@ def main():
 
     ip_addr, net_interface = get_args()
     install_dependencies()
+    enable_packet_forwarding()
 
 
 if __name__ == "__main__":
