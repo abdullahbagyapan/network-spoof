@@ -1,6 +1,22 @@
 import argparse
 import ipaddress
 import psutil
+import subprocess
+
+def install_dependencies():
+    
+    # Dependencies
+    required_packages = ["iptables", "tcpdump"]
+
+    command = ['sudo', 'apt', 'install'] + required_packages
+
+    try:
+        print(f"Installing packages: {', '.join(required_packages)}...")
+        subprocess.check_call(command)
+        print("Packages installed successfully.")
+    
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to install packages: {e}")
 
 def get_args():
     """
@@ -65,6 +81,7 @@ def main():
     """
 
     ip_addr, net_interface = get_args()
+    install_dependencies()
 
 
 if __name__ == "__main__":
