@@ -32,6 +32,26 @@ def enable_packet_forwarding():
         print("Failed to enabling packet forwarding")
         exit(1)
 
+def route_whole_network(net_interface, ip_addr):
+    
+    # eg: sudo iptables -t nat -A POSTROUTING -o wlp4s0 -s 10.10.10.11 -j MASQUERADE
+    ## -t (table)
+    ## -A (rule to the chain)
+    ## -o (network interface that whole network is going out)
+    ## -s (ip address that whole network is coming in)
+    ## -j (target)
+    command = ['sudo', 'iptables', '-t', 'nat', '-A', 'POSTROUTING', '-o', net_interface, '-s', ip_addr, '-j', 'MASQUERADE']
+
+    # Execute the command
+    try:
+        print(f"Routing whole network from {ip_addr} to {net_interface}...")
+        subprocess.check_call(command)
+        print("Routing network done successfully...")
+
+    except subprocess.CalledProcessError as e:
+        print("Failed to routing network")
+        exit(1)
+
 def get_args():
     """
     \brief  Get arguments and validate them
@@ -95,8 +115,9 @@ def main():
     """
 
     ip_addr, net_interface = get_args()
-    install_dependencies()
-    enable_packet_forwarding()
+    #install_dependencies()
+    #enable_packet_forwarding()
+    route_whole_network(net_interface, ip_addr)
 
 
 if __name__ == "__main__":
