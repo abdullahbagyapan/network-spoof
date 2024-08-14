@@ -2,6 +2,7 @@ import argparse
 import ipaddress
 import psutil
 import subprocess
+import signal
 
 def install_dependencies():
     
@@ -50,6 +51,25 @@ def route_whole_network(net_interface, ip_addr):
 
     except subprocess.CalledProcessError as e:
         print("Failed to routing network")
+        exit(1)
+
+def dump_whole_network(net_interface):
+
+    # eg: tcpdump -i enp0s -vvv -n -w traffic.pcap
+    ## TODO: save under ~/.tcpdump/traffic.pcap
+    ## -i (the network interface)
+    ## -v (verbosity)
+    ## -n (no dns resolution, pure IP addresses)
+    ## -w (the file)
+    command = ['sudo', 'tcpdump', '-i', net_interface, '-vvv', '-n', '-w', 'traffic.pcap',]
+
+    # Execute the command
+    try:
+        print(f"Dumping {net_interface} packages...")
+        subprocess.check_call(command)
+
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to dumping {net_interface}, {e}")
         exit(1)
 
 def get_args():
@@ -115,10 +135,10 @@ def main():
     """
 
     ip_addr, net_interface = get_args()
-    #install_dependencies()
-    #enable_packet_forwarding()
+    install_dependencies()
+    enable_packet_forwarding()
     route_whole_network(net_interface, ip_addr)
-
+    dump_whole_network(net_interface)
 
 if __name__ == "__main__":
     main()
